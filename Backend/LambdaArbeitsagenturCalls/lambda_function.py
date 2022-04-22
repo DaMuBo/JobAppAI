@@ -2,12 +2,27 @@
 Development part of the lambda function for the api calls 
 from the Arbeitsagentur API
 
+funktionen:
+    get_jwt(): Holt das Access Token zur Authentifizierung bei der API
+    
+    search(): Führt die Suche aus und gibt die Referenznr in einer Liste zurück mit welcher die Jobbeschreibungen gefunden werden können
+    
+    job_details(): Holt die Jobdetail Informationen für einen konkreten Job aus der API
+    
+    job_rotator(): kombiniert die Funktionen get_jwt, search und job_details. Außerdem werden die Ergebnisse in einer Liste gesammelt
+        und zurückgegeben
+    
+    lambda_handler:
+        definiert rahmenbedingungen und führt den job_rotator() aus. Die Ergebnisse werden unter ihrer refnr im S3 Bucket gespeichert.
+
 """
 
 import json
 import boto3
 import requests
 import base64
+
+
 def get_jwt():
     """fetch the jwt token object"""
     headers = {
@@ -27,20 +42,36 @@ def get_jwt():
 
     return response.json()
 
-def search(jwt, what):
-    """search for jobs. params can be found here: https://jobsuche.api.bund.dev/"""
+def search(jwt, what, page, limit):
+    """search for jobs. params can be found here: https://jobsuche.api.bund.dev/
+    Inputs:
+    --------------------------------------
+    
+    jwt:
+        Das Access Token für den Zugriff
+        
+    what: 
+        Der Suchbergriff nach dem gesucht wird
+    
+    page:
+        Die Seite die aufgesucht werden soll
+    
+    limit:
+        Wenn nicht None dann wird eine Info mit veroeffentlichseit an parameter angehängt zur Eingrenzung
+    
     """
-    **** TODO ****
-        Hier die Funktion anpassen -> page als Input hinzunehmen, im aufruf dann ein umgang mit fehlermeldungen einbauen
-    """
+    
     params = (
         ('angebotsart', '1'),
-        ('page', '2'),
+        ('page', page),
         ('pav', 'false'),
         ('size', '100'),
-        ('umkreis', '25'),
         ('was', what),
     )
+    if limit is not None:
+        params = params + (
+            ('veroeffentlichtseit', limit),
+        )
 
     headers = {
         'User-Agent': 'Jobsuche/2.9.2 (de.arbeitsagentur.jobboerse; build:1077; iOS 15.1.0) Alamofire/5.4.4',
@@ -51,10 +82,14 @@ def search(jwt, what):
 
     response = requests.get('https://rest.arbeitsagentur.de/jobboerse/jobsuche-service/pc/v4/app/jobs',
                             headers=headers, params=params, verify=False)
+    
     return response.json()
 
 
 def job_details(jwt, job_ref):
+    """
+    Holt die Detaildaten zu einem Job aus der API
+    """
 
     headers = {
         'User-Agent': 'Jobsuche/2.9.3 (de.arbeitsagentur.jobboerse; build:1078; iOS 15.1.0) Alamofire/5.4.4',
@@ -70,27 +105,31 @@ def job_details(jwt, job_ref):
     return response.json()
 
 
-def job_rotator():
+def job_rotator(limit=None):
     """
-    **** TODO ***** 
-        hier eine while schleife so lanee wir neue seiten haben und es keinen fehler gibt
-    """
+    Input:
     
-    jwt = get_jwt()
-    result = search(jwt["access_token"], "data science")
-    
-    """ 
-    **** TODO ***** 
-        alle daten zusammen fügen
-    """ 
-    print(result['stellenangebote'][0]["refnr"])
-    print(job_details(jwt["access_token"], result['stellenangebote'][0]["refnr"]))
-    
+        limit: Integer/None
+            wenn nicht None dann gibt es die maximale Anzahl an Tage in die Vergangenheit an.
     """
-    **** TODO *****
-        return der zusammengefügten Daten
-        Im Lambdahandler dann eine For schleife bauen die die Json files wegspeichert
-    """
+    checker = True
+    page = 1
+    myList = []
+    
+    while(checker):
+        jwt = get_jwt()
+        result = search(jwt["access_token"], "data", page, limit)
+        if 'stellenangebote' in result.keys():
+            for row in result['stellenangebote']:
+                output = job_details(jwt["access_token"], row["refnr"])
+                myList.append(output)
+            page += 1
+        else:
+            checker=False
+    
+    return myList
+        
+
 
 def lambda_handler(event, context):
     # TODO implement
@@ -98,17 +137,17 @@ def lambda_handler(event, context):
     
     bucket_name = "job-app-data-bucket"
     
-    fileName = 'tester' + '.json'
     s3_path = 'testraw/' + fileName
+    limit = None # days since the writing for initial load = None After that = 0 or 1
     
     # the json file to write
-    myFile = {}
-    myFile['ID'] = '123456'
-    myFile['body'] = 'Bibop ich bin ein text'
-    myFile['value'] = 500
+    myList = jobrotator(limit)
+    for row in myList
+        myFile = row
+        filename = row['refnr'] + '.json'
     
     bytestream = bytes(json.dumps(myFile).encode("utf-8"))
     
     s3.put_object(Bucket=bucket_name, Key=s3_path, Body=bytestream)
 
-    print('Put Complete walla')
+    print('Put Complete Writing Data to Bucket')
