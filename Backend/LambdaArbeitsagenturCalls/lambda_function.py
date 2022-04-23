@@ -105,7 +105,7 @@ def job_details(jwt, job_ref):
     return response.json()
 
 
-def job_rotator(limit=None):
+def job_rotator(limit=None, what='data'):
     """
     Input:
     
@@ -118,7 +118,7 @@ def job_rotator(limit=None):
     
     while(checker):
         jwt = get_jwt()
-        result = search(jwt["access_token"], "data", page, limit)
+        result = search(jwt["access_token"], what, page, limit)
         if 'stellenangebote' in result.keys():
             for row in result['stellenangebote']:
                 output = job_details(jwt["access_token"], row["refnr"])
@@ -137,17 +137,21 @@ def lambda_handler(event, context):
     
     bucket_name = "job-app-data-bucket"
     
-    s3_path = 'testraw/' + fileName
-    limit = None # days since the writing for initial load = None After that = 0 or 1
+    
+    limit = 0 # days since the writing for initial load = None After that = 0 or 1
+    what = 'data' # what is searched for'
     
     # the json file to write
-    myList = jobrotator(limit)
-    for row in myList
-        myFile = row
-        filename = row['refnr'] + '.json'
-    
-    bytestream = bytes(json.dumps(myFile).encode("utf-8"))
-    
-    s3.put_object(Bucket=bucket_name, Key=s3_path, Body=bytestream)
+    myList = job_rotator(limit, what)
+    for row in myList:
+        if 'refnr' in row.keys():
+            myFile = row
+            filename = row['refnr'].encode('unicode-escape')
+            filename = filename.decode('ascii', errors='ignore').replace("\\",'_') + '.json'
+            s3_path = 'raw/' + filename
+
+            bytestream = bytes(json.dumps(myFile).encode("utf-8"))
+
+            s3.put_object(Bucket=bucket_name, Key=s3_path, Body=bytestream)
 
     print('Put Complete Writing Data to Bucket')
