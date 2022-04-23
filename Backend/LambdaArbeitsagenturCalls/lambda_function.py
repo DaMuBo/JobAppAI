@@ -147,11 +147,19 @@ def lambda_handler(event, context):
         if 'refnr' in row.keys():
             myFile = row
             filename = row['refnr'].encode('unicode-escape')
-            filename = filename.decode('ascii', errors='ignore').replace("\\",'_') + '.json'
+            filename = filename.decode('ascii', errors='ignore').replace("\\",'_').replace('/','_') + '.json'
             s3_path = 'raw/' + filename
 
             bytestream = bytes(json.dumps(myFile).encode("utf-8"))
 
             s3.put_object(Bucket=bucket_name, Key=s3_path, Body=bytestream)
+            
+            if 'stellenbeschreibung' in row.keys():
+                myFile = row['stellenbeschreibung'].replace('\n',' ')
+                filename = row['refnr'].encode('unicode-escape')
+                filename = filename.decode('ascii', errors='ignore').replace("\\",'_').replace('/','_') + '.txt'
+                s3_path = 'unlabeled/' + filename
+                
+                s3.put_object(Bucket=bucket_name, Key=s3_path, Body=myFile)
 
     print('Put Complete Writing Data to Bucket')

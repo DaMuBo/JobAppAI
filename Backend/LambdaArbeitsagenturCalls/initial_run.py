@@ -24,3 +24,15 @@ if __name__ == '__main__':
 
             with open(s3_path, 'w') as fp:
                 json.dump(myFile, fp)
+                
+        if 'stellenbeschreibung' in row.keys():
+            myFile = row['stellenbeschreibung'].replace('\n',' ')
+            filename = row['refnr'].encode('unicode-escape')
+            filename = filename.decode('ascii', errors='ignore').replace("\\",'_').replace('/','_') + '.txt'
+            s3_path = 'unlabeled/' + filename
+            try:    
+                with open(s3_path, 'w', encoding='unicode-escape') as fp:
+                    fp.write(myFile)
+            except:
+                print(myFile)
+                raise
