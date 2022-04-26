@@ -1,1 +1,3 @@
 *.json
+*.txt
+.Backend/LambdaArbeitsagenturCalls/test_venv/*
