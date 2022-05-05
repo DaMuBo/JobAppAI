@@ -130,13 +130,46 @@ def job_rotator(limit=None, what='data'):
     return myList
         
 
+def dict_to_item(raw):
+    """
+    takes a dictionary and is returning the datatype of each item in a format for writing it into a dynamoDB
+    is using recursive calls on itself to get the informations out of lists and dicitonarys
+    
+    """
+    if type(raw) is dict:
+        resp = {}
+        for k,v in raw.items():
+            if type(v) is str:
+                resp[k] = {
+                    'S': v
+                }
+            elif type(v) is int:
+                resp[k] = {
+                    'I': str(v)
+                }
+            elif type(v) is dict:
+                resp[k] = {
+                    'M': dict_to_item(v)
+                }
+            elif type(v) is list:
+                resp[k] = []
+                for i in v:
+                    resp[k].append(dict_to_item(i))
+                    
+        return resp
+    elif type(raw) is str:
+        return {
+            'S': raw
+        }
+    elif type(raw) is int:
+        return {
+            'I': str(raw)
+        }
+
 
 def lambda_handler(event, context):
     # TODO implement
-    s3 = boto3.client("s3")
-    
-    bucket_name = "job-app-data-bucket"
-    
+    dynamodb = boto3.client("dynamodb")   
     
     limit = 0 # days since the writing for initial load = None After that = 0 or 1
     what = 'data' # what is searched for'
@@ -145,21 +178,7 @@ def lambda_handler(event, context):
     myList = job_rotator(limit, what)
     for row in myList:
         if 'refnr' in row.keys():
-            myFile = row
-            filename = row['refnr'].encode('unicode-escape')
-            filename = filename.decode('ascii', errors='ignore').replace("\\",'_').replace('/','_') + '.json'
-            s3_path = 'raw/' + filename
-
-            bytestream = bytes(json.dumps(myFile).encode("utf-8"))
-
-            s3.put_object(Bucket=bucket_name, Key=s3_path, Body=bytestream)
-            
-            if 'stellenbeschreibung' in row.keys():
-                myFile = row['stellenbeschreibung'].replace('\n',' ')
-                filename = row['refnr'].encode('unicode-escape')
-                filename = filename.decode('ascii', errors='ignore').replace("\\",'_').replace('/','_') + '.txt'
-                s3_path = 'unlabeled/' + filename
-                
-                s3.put_object(Bucket=bucket_name, Key=s3_path, Body=myFile)
+            myItem = dict_to_item(row)
+            dynamodb.put_item(TableName='JobData', Item=myItem)
 
     print('Put Complete Writing Data to Bucket')

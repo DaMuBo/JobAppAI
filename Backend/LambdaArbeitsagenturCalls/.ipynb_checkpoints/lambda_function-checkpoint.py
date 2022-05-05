@@ -105,7 +105,7 @@ def job_details(jwt, job_ref):
     return response.json()
 
 
-def job_rotator(limit=None):
+def job_rotator(limit=None, what='data'):
     """
     Input:
     
@@ -118,7 +118,7 @@ def job_rotator(limit=None):
     
     while(checker):
         jwt = get_jwt()
-        result = search(jwt["access_token"], "data", page, limit)
+        result = search(jwt["access_token"], what, page, limit)
         if 'stellenangebote' in result.keys():
             for row in result['stellenangebote']:
                 output = job_details(jwt["access_token"], row["refnr"])
@@ -130,24 +130,55 @@ def job_rotator(limit=None):
     return myList
         
 
+def dict_to_item(raw):
+    """
+    takes a dictionary and is returning the datatype of each item in a format for writing it into a dynamoDB
+    is using recursive calls on itself to get the informations out of lists and dicitonarys
+    
+    """
+    if type(raw) is dict:
+        resp = {}
+        for k,v in raw.items():
+            if type(v) is str:
+                resp[k] = {
+                    'S': v
+                }
+            elif type(v) is int:
+                resp[k] = {
+                    'I': str(v)
+                }
+            elif type(v) is dict:
+                resp[k] = {
+                    'M': dict_to_item(v)
+                }
+            elif type(v) is list:
+                resp[k] = []
+                for i in v:
+                    resp[k].append(dict_to_item(i))
+                    
+        return resp
+    elif type(raw) is str:
+        return {
+            'S': raw
+        }
+    elif type(raw) is int:
+        return {
+            'I': str(raw)
+        }
+
 
 def lambda_handler(event, context):
     # TODO implement
-    s3 = boto3.client("s3")
+    dynamodb = boto3.client("dynamodb")   
     
-    bucket_name = "job-app-data-bucket"
-    
-    s3_path = 'testraw/' + fileName
-    limit = None # days since the writing for initial load = None After that = 0 or 1
+    limit = 0 # days since the writing for initial load = None After that = 0 or 1
+    what = 'data' # what is searched for'
     
     # the json file to write
-    myList = jobrotator(limit)
-    for row in myList
-        myFile = row
-        filename = row['refnr'] + '.json'
-    
-    bytestream = bytes(json.dumps(myFile).encode("utf-8"))
-    
-    s3.put_object(Bucket=bucket_name, Key=s3_path, Body=bytestream)
+    myList = job_rotator(limit, what)
+    for row in myList:
+        if 'refnr' in row.keys():
+            myItem = dict_to_item(row)
+            dynamodb.put_item(TableName='JobData', Item=myItem)
 
     print('Put Complete Writing Data to Bucket')
