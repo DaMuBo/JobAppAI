@@ -130,6 +130,42 @@ def job_rotator(limit=None, what='data'):
     return myList
         
 
+def dict_to_item(raw):
+    """
+    takes a dictionary and is returning the datatype of each item in a format for writing it into a dynamoDB
+    is using recursive calls on itself to get the informations out of lists and dicitonarys
+    
+    """
+    if type(raw) is dict:
+        resp = {}
+        for k,v in raw.items():
+            if type(v) is str:
+                resp[k] = {
+                    'S': v
+                }
+            elif type(v) is int:
+                resp[k] = {
+                    'I': str(v)
+                }
+            elif type(v) is dict:
+                resp[k] = {
+                    'M': dict_to_item(v)
+                }
+            elif type(v) is list:
+                resp[k] = []
+                for i in v:
+                    resp[k].append(dict_to_item(i))
+                    
+        return resp
+    elif type(raw) is str:
+        return {
+            'S': raw
+        }
+    elif type(raw) is int:
+        return {
+            'I': str(raw)
+        }
+
 
 def lambda_handler(event, context):
     # TODO implement
@@ -142,6 +178,7 @@ def lambda_handler(event, context):
     myList = job_rotator(limit, what)
     for row in myList:
         if 'refnr' in row.keys():
-            dynamodb.put_item(TableName='JobData', Item=row)
+            myItem = dict_to_item(row)
+            dynamodb.put_item(TableName='JobData', Item=myItem)
 
     print('Put Complete Writing Data to Bucket')
