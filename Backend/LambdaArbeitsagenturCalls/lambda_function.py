@@ -133,10 +133,7 @@ def job_rotator(limit=None, what='data'):
 
 def lambda_handler(event, context):
     # TODO implement
-    s3 = boto3.client("s3")
-    
-    bucket_name = "job-app-data-bucket"
-    
+    dynamodb = boto3.client("dynamodb")   
     
     limit = 0 # days since the writing for initial load = None After that = 0 or 1
     what = 'data' # what is searched for'
@@ -145,21 +142,6 @@ def lambda_handler(event, context):
     myList = job_rotator(limit, what)
     for row in myList:
         if 'refnr' in row.keys():
-            myFile = row
-            filename = row['refnr'].encode('unicode-escape')
-            filename = filename.decode('ascii', errors='ignore').replace("\\",'_').replace('/','_') + '.json'
-            s3_path = 'raw/' + filename
-
-            bytestream = bytes(json.dumps(myFile).encode("utf-8"))
-
-            s3.put_object(Bucket=bucket_name, Key=s3_path, Body=bytestream)
-            
-            if 'stellenbeschreibung' in row.keys():
-                myFile = row['stellenbeschreibung'].replace('\n',' ')
-                filename = row['refnr'].encode('unicode-escape')
-                filename = filename.decode('ascii', errors='ignore').replace("\\",'_').replace('/','_') + '.txt'
-                s3_path = 'unlabeled/' + filename
-                
-                s3.put_object(Bucket=bucket_name, Key=s3_path, Body=myFile)
+            dynamodb.put_item(TableName='JobData', Item=row)
 
     print('Put Complete Writing Data to Bucket')

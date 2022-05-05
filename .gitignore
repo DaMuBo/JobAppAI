@@ -1,5 +1,6 @@
 *.json
 *.txt
+*.pyc
 
 Backend/LambdaArbeitsagenturCalls/test_venv/*
 Backend/LambdaArbeitsagenturCalls/python/*
