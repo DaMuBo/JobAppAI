@@ -56,7 +56,6 @@ def search(jwt, what, page, limit):
 
     limit:
         Wenn nicht None dann wird eine Info mit veroeffentlichseit an parameter angehängt zur Eingrenzung
-
     """
 
     params = (
@@ -80,7 +79,7 @@ def search(jwt, what, page, limit):
 
     response = requests.get('https://rest.arbeitsagentur.de/jobboerse/jobsuche-service/pc/v4/app/jobs',
                             headers=headers, params=params, verify=False)
-    
+
     return response.json()
 
 
@@ -106,15 +105,15 @@ def job_details(jwt, job_ref):
 def job_rotator(limit=None, what='data'):
     """
     Input:
-    
+
         limit: Integer/None
             wenn nicht None dann gibt es die maximale Anzahl an Tage in die Vergangenheit an.
     """
     checker = True
     page = 1
     myList = []
-    
-    while(checker==True):
+
+    while(checker is True):
         jwt = get_jwt()
         result = search(jwt["access_token"], what, page, limit)
         if 'stellenangebote' in result.keys():
@@ -126,54 +125,60 @@ def job_rotator(limit=None, what='data'):
             checker=False
     
     return myList
-        
+
 
 def dict_to_item(raw):
     """
     takes a dictionary and is returning the datatype of each item in a format for writing it into a dynamoDB
     is using recursive calls on itself to get the informations out of lists and dicitonarys
-    
+
     """
-    if type(raw) is dict:
+    if isinstance(raw,dict):
         resp = {}
         for k,v in raw.items():
-            if type(v) is str:
+            if isinstance(v,str):
                 resp[k] = {
                     'S': v
                 }
-            elif type(v) is int:
+            elif isinstance(v,int) or isinstance(v,float):
                 resp[k] = {
-                    'I': str(v)
+                    'N': str(v)
                 }
-            elif type(v) is dict:
+            elif isinstance(v,dict):
                 resp[k] = {
                     'M': dict_to_item(v)
                 }
-            elif type(v) is list:
-                resp[k] = []
+            elif isinstance(v,list):
+                resp[k] = {"L":[]}
                 for i in v:
-                    resp[k].append(dict_to_item(i))
-                    
+                    if isinstance(i,dict):
+                        resp[k]["L"].append({"M":dict_to_item(i)})
+                        print(resp[k])
+                    else:
+                        resp[k]["L"].append(dict_to_item(i))
+                        print(resp[k])
         return resp
-    elif type(raw) is str:
+    elif isinstance(raw,str):
         return {
             'S': raw
         }
-    elif type(raw) is int:
+    elif isinstance(raw,int) or isinstance(raw,float):
         return {
-            'I': str(raw)
+            'N': str(raw)
         }
-
+    return {
+        'S':str(raw)
+    }
 
 def lambda_handler(event, context):
     """
     Finale Funktion die von Lambda aufgerufen wird und die Daten ausführt
     """
-    dynamodb = boto3.client("dynamodb")   
-    
+    dynamodb = boto3.client("dynamodb")
+
     limit = 0 # days since the writing for initial load = None After that = 0 or 1
     what = 'data' # what is searched for'
-    
+
     # the json file to write
     myList = job_rotator(limit, what)
     for row in myList:
