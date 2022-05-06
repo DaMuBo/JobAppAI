@@ -1,27 +1,25 @@
 """
-Development part of the lambda function for the api calls 
+Development part of the lambda function for the api calls
 from the Arbeitsagentur API
 
 funktionen:
     get_jwt(): Holt das Access Token zur Authentifizierung bei der API
-    
+
     search(): Führt die Suche aus und gibt die Referenznr in einer Liste zurück mit welcher die Jobbeschreibungen gefunden werden können
-    
+
     job_details(): Holt die Jobdetail Informationen für einen konkreten Job aus der API
-    
+
     job_rotator(): kombiniert die Funktionen get_jwt, search und job_details. Außerdem werden die Ergebnisse in einer Liste gesammelt
         und zurückgegeben
-    
+
     lambda_handler:
         definiert rahmenbedingungen und führt den job_rotator() aus. Die Ergebnisse werden unter ihrer refnr im S3 Bucket gespeichert.
-
 """
 
 import json
 import boto3
 import requests
 import base64
-
 
 def get_jwt():
     """fetch the jwt token object"""
@@ -46,21 +44,21 @@ def search(jwt, what, page, limit):
     """search for jobs. params can be found here: https://jobsuche.api.bund.dev/
     Inputs:
     --------------------------------------
-    
+
     jwt:
         Das Access Token für den Zugriff
-        
+
     what: 
         Der Suchbergriff nach dem gesucht wird
-    
+
     page:
         Die Seite die aufgesucht werden soll
-    
+
     limit:
         Wenn nicht None dann wird eine Info mit veroeffentlichseit an parameter angehängt zur Eingrenzung
-    
+
     """
-    
+
     params = (
         ('angebotsart', '1'),
         ('page', page),
@@ -116,7 +114,7 @@ def job_rotator(limit=None, what='data'):
     page = 1
     myList = []
     
-    while(checker):
+    while(checker==True):
         jwt = get_jwt()
         result = search(jwt["access_token"], what, page, limit)
         if 'stellenangebote' in result.keys():
@@ -168,7 +166,9 @@ def dict_to_item(raw):
 
 
 def lambda_handler(event, context):
-    # TODO implement
+    """
+    Finale Funktion die von Lambda aufgerufen wird und die Daten ausführt
+    """
     dynamodb = boto3.client("dynamodb")   
     
     limit = 0 # days since the writing for initial load = None After that = 0 or 1

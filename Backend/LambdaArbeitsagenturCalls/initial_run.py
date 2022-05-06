@@ -1,18 +1,22 @@
-from lambda_function import *
+"""
+Entwicklungssicht für den Initial Test Run der Application
+wird nicht produktiv genutzt und testet nur die funktionen um diese lokal abzuspeichern
+"""
 import json
 import warnings
 from pathlib import Path
+from lambda_function import job_rotator
 
 def get_folder():
     """
     returns the actual project folder and makes it easy for file handlings
     """
-    
+
     return Path.cwd()
 
 if __name__ == '__main__':
     warnings.filterwarnings("ignore")
-    
+
     pfad = get_folder() / 'raw'
     myList = job_rotator(None,'data')
     for row in myList:
@@ -24,13 +28,13 @@ if __name__ == '__main__':
 
             with open(s3_path, 'w') as fp:
                 json.dump(myFile, fp)
-                
+
         if 'stellenbeschreibung' in row.keys():
             myFile = row['stellenbeschreibung'].replace('\n',' ')
             filename = row['refnr'].encode('unicode-escape')
             filename = filename.decode('ascii', errors='ignore').replace("\\",'_').replace('/','_') + '.txt'
             s3_path = 'unlabeled/' + filename
-            try:    
+            try:
                 with open(s3_path, 'w', encoding='unicode-escape') as fp:
                     fp.write(myFile)
             except:
