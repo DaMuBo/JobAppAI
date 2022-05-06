@@ -16,10 +16,9 @@ funktionen:
         definiert rahmenbedingungen und führt den job_rotator() aus. Die Ergebnisse werden unter ihrer refnr im S3 Bucket gespeichert.
 """
 
-import json
-import boto3
-import requests
 import base64
+import requests
+import boto3
 
 def get_jwt():
     """fetch the jwt token object"""
@@ -111,7 +110,7 @@ def job_rotator(limit=None, what='data'):
     """
     checker = True
     page = 1
-    myList = []
+    mylist = []
 
     while(checker is True):
         jwt = get_jwt()
@@ -119,12 +118,12 @@ def job_rotator(limit=None, what='data'):
         if 'stellenangebote' in result.keys():
             for row in result['stellenangebote']:
                 output = job_details(jwt["access_token"], row["refnr"])
-                myList.append(output)
+                mylist.append(output)
             page += 1
         else:
             checker=False
     
-    return myList
+    return mylist
 
 
 def dict_to_item(raw):
@@ -180,10 +179,10 @@ def lambda_handler(event, context):
     what = 'data' # what is searched for'
 
     # the json file to write
-    myList = job_rotator(limit, what)
-    for row in myList:
+    mylist = job_rotator(limit, what)
+    for row in mylist:
         if 'refnr' in row.keys():
-            myItem = dict_to_item(row)
-            dynamodb.put_item(TableName='JobData', Item=myItem)
+            myitem = dict_to_item(row)
+            dynamodb.put_item(TableName='JobData', Item=myitem)
 
     print('Put Complete Writing Data to Bucket')
