@@ -1,5 +1,6 @@
 *.json
-*.txt
+Backend/LambdaArbeitsagenturCalls/raw/*.txt
+Backend/LambdaArbeitsagenturCalls/unlabeled/*.txt
 *.pyc
 
 .ipynb_checkpoints
