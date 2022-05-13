@@ -1,6 +1,8 @@
 *.json
 Backend/LambdaArbeitsagenturCalls/raw/*.txt
 Backend/LambdaArbeitsagenturCalls/unlabeled/*.txt
+
+Backend/GetJobs/api_conf.yml
 *.pyc
 
 .ipynb_checkpoints

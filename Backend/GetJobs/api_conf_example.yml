@@ -1,0 +1,8 @@
+"url" : "https://job-data-app.auth.eu-central-1.amazoncognito.com/oauth2/token"
+"client_id" : "Your App Client"
+"username" : "Your Username"
+"password" : "Your Password"
+"redirect_url" : "http://example.com/callback"
+"grant_type" : "client_credentials"
+"scope" : "your Scope"
+"Content-Type" : "application/x-www-form-urlencoded"
