@@ -1,0 +1,8 @@
+"url" : "https://job-data-app.auth.eu-central-1.amazoncognito.com/oauth2/token"
+"client_id" : "6cnj9dtbf120oa5jjt0i5kutmc"
+"username" : "technical-app-user"
+"password" : "Hamburger_123"
+"redirect_url" : "http://example.com/callback"
+"grant_type" : "client_credentials"
+"scope" : "read/write"
+"Content-Type" : "application/x-www-form-urlencoded"
