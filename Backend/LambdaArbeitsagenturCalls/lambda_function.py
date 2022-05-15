@@ -139,7 +139,11 @@ def dict_to_item(raw):
                 resp[k] = {
                     'S': v
                 }
-            elif isinstance(v,int) or isinstance(v,float):
+            elif isinstance(v,bool):
+                resp[k] = {
+                    'S': str(v)
+                }
+            elif isinstance(v,(int,float)):
                 resp[k] = {
                     'N': str(v)
                 }
@@ -161,7 +165,7 @@ def dict_to_item(raw):
         return {
             'S': raw
         }
-    elif isinstance(raw,int) or isinstance(raw,float):
+    elif isinstance(raw,(int,float)):
         return {
             'N': str(raw)
         }
@@ -183,7 +187,7 @@ def lambda_handler(event, context):
     for row in mylist:
         if 'refnr' in row.keys():
             if 'titel' in row.keys():
-                if 'data' in row['titel'] or 'analyst' in row['titel']:
+                if 'data' in row['titel'].lower() or 'analyst' in row['titel'].lower():
                     myitem = dict_to_item(row)
                     dynamodb.put_item(TableName='JobData', Item=myitem)
 
