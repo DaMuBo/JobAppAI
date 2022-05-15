@@ -1,24 +1,27 @@
 """
-Development part of the lambda function for the api calls
+Development part of the lambda function for the api calls 
 from the Arbeitsagentur API
 
 funktionen:
     get_jwt(): Holt das Access Token zur Authentifizierung bei der API
-
+    
     search(): Führt die Suche aus und gibt die Referenznr in einer Liste zurück mit welcher die Jobbeschreibungen gefunden werden können
-
+    
     job_details(): Holt die Jobdetail Informationen für einen konkreten Job aus der API
-
+    
     job_rotator(): kombiniert die Funktionen get_jwt, search und job_details. Außerdem werden die Ergebnisse in einer Liste gesammelt
         und zurückgegeben
-
+    
     lambda_handler:
         definiert rahmenbedingungen und führt den job_rotator() aus. Die Ergebnisse werden unter ihrer refnr im S3 Bucket gespeichert.
+
 """
 
-import base64
-import requests
+import json
 import boto3
+import requests
+import base64
+
 
 def get_jwt():
     """fetch the jwt token object"""
@@ -43,20 +46,21 @@ def search(jwt, what, page, limit):
     """search for jobs. params can be found here: https://jobsuche.api.bund.dev/
     Inputs:
     --------------------------------------
-
+    
     jwt:
         Das Access Token für den Zugriff
-
+        
     what: 
         Der Suchbergriff nach dem gesucht wird
-
+    
     page:
         Die Seite die aufgesucht werden soll
-
+    
     limit:
         Wenn nicht None dann wird eine Info mit veroeffentlichseit an parameter angehängt zur Eingrenzung
+    
     """
-
+    
     params = (
         ('angebotsart', '1'),
         ('page', page),
@@ -78,7 +82,7 @@ def search(jwt, what, page, limit):
 
     response = requests.get('https://rest.arbeitsagentur.de/jobboerse/jobsuche-service/pc/v4/app/jobs',
                             headers=headers, params=params, verify=False)
-
+    
     return response.json()
 
 
@@ -104,85 +108,84 @@ def job_details(jwt, job_ref):
 def job_rotator(limit=None, what='data'):
     """
     Input:
-
+    
         limit: Integer/None
             wenn nicht None dann gibt es die maximale Anzahl an Tage in die Vergangenheit an.
     """
     checker = True
     page = 1
-    mylist = []
-
-    while(checker is True):
+    myList = []
+    
+    while(checker):
         jwt = get_jwt()
         result = search(jwt["access_token"], what, page, limit)
         if 'stellenangebote' in result.keys():
             for row in result['stellenangebote']:
                 output = job_details(jwt["access_token"], row["refnr"])
-                mylist.append(output)
+                myList.append(output)
             page += 1
         else:
             checker=False
     
-    return mylist
-
+    return myList
+        
 
 def dict_to_item(raw):
     """
     takes a dictionary and is returning the datatype of each item in a format for writing it into a dynamoDB
     is using recursive calls on itself to get the informations out of lists and dicitonarys
-
+    
     """
-    if isinstance(raw,dict):
+    if type(raw) is dict:
         resp = {}
         for k,v in raw.items():
-            if isinstance(v,str):
+            if type(v) is str:
                 resp[k] = {
                     'S': v
                 }
-            elif isinstance(v,int) or isinstance(v,float):
+            elif type(v) is int or type(v) is float:
                 resp[k] = {
                     'N': str(v)
                 }
-            elif isinstance(v,dict):
+            elif type(v) is dict:
                 resp[k] = {
                     'M': dict_to_item(v)
                 }
-            elif isinstance(v,list):
+            elif type(v) is list:
                 resp[k] = {"L":[]}
                 for i in v:
-                    if isinstance(i,dict):
+                    if type(i) is dict:
                         resp[k]["L"].append({"M":dict_to_item(i)})
                         print(resp[k])
                     else:
                         resp[k]["L"].append(dict_to_item(i))
                         print(resp[k])
+                    
         return resp
-    elif isinstance(raw,str):
+    elif type(raw) is str:
         return {
             'S': raw
         }
-    elif isinstance(raw,int) or isinstance(raw,float):
+    elif type(raw) is int or type(raw) is float:
         return {
             'N': str(raw)
         }
-    return {
-        'S':str(raw)
-    }
+
 
 def lambda_handler(event, context):
-    """
-    Finale Funktion die von Lambda aufgerufen wird und die Daten ausführt
-    """
-    dynamodb = boto3.client("dynamodb")
-
+    # TODO implement
+    dynamodb = boto3.client("dynamodb")   
+    
     limit = 0 # days since the writing for initial load = None After that = 0 or 1
     what = 'data' # what is searched for'
-
+    
     # the json file to write
-    mylist = job_rotator(limit, what)
-    for row in mylist:
+    myList = job_rotator(limit, what)
+    for row in myList:
         if 'refnr' in row.keys():
-            myitem = dict_to_item(row)
-            dynamodb.put_item(TableName='JobData', Item=myitem)
+            if 'titel' in row.keys():
+                if "data" in row['titel'].lower() or "analyst" in row['titel'].lower():
+                    myItem = dict_to_item(row)
+                    dynamodb.put_item(TableName='JobData', Item=myItem)
 
     print('Put Complete Writing Data to Bucket')
