@@ -5,7 +5,7 @@ Holt sich die Texte aus der Dynamo DB und extrahiert die skills aus den stellenb
 
 Functions:
 -------------------------------
-lambda_handler: 
+lambda_handler:
     Main Function, Steuert die Eingaben und anderen Funktionen auf Basis des Inputs
 
 extractor_rule:
@@ -24,7 +24,7 @@ def extractor_rule(text):
     output:
     ------------
     return skills: liste
-        liste mit den gefundenen Skilsl in dem Text            
+        liste mit den gefundenen Skilsl in dem Text
     """
     skills = []
     liste = ['python','sql','node.js','angular','aws','gcp','azure']
