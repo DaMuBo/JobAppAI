@@ -8,3 +8,4 @@ Backend/LambdaArbeitsagenturCalls/unlabeled/*.txt
 Backend/LambdaArbeitsagenturCalls/test_venv/*
 Backend/LambdaArbeitsagenturCalls/python/*
 
+venv/
