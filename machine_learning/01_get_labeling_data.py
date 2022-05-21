@@ -59,11 +59,10 @@ def manifest_to_json(manifest_file):
         json_file_name = json_folder_name + "_" + str(index) + ".json"
         json_file_path = os.path.join(json_folder, json_file_name)
         with open(json_file_path, "w", encoding=encoding) as f:
-            json.dump(json.loads(line), f, indent=4, ensure_ascii=False)
+            json.dump(json.loads(line), f, indent=4)
     print(f"{manifest_file} to JSON done")
 
 
-if __name__ == "__main__":
-    get_data()
-    for file in output_files:
-        manifest_to_json(file)
+get_data()
+for file in output_files:
+    manifest_to_json(file)
