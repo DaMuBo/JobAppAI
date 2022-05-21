@@ -4,7 +4,7 @@ import os
 
 sys.stdout.reconfigure(encoding="utf-8")
 
-json_folders = [r"data\labeling_job_1_output"]
+json_folders = ["labeling_job_1_output"]
 
 PROJECT_ROOT_DIR = "."
 data_path = os.path.join(PROJECT_ROOT_DIR, "data")
@@ -38,9 +38,10 @@ def get_skills_from_json(file):
 
 skills = []
 for folder in json_folders:
-    for file in os.listdir(folder):
+    json_folder_path = os.path.join(data_path, folder)
+    for file in os.listdir(json_folder_path):
         try:  # nur wenn Skills da sind
-            get_skills_from_json(os.path.join(folder, file))
+            get_skills_from_json(os.path.join(json_folder_path, file))
         except Exception as e:
             pass
 skills = list(set(skills))
