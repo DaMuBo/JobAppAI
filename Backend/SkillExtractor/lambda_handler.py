@@ -45,8 +45,9 @@ def download_dir(client, resource, dist, local='/tmp', bucket='s3bucket'):
                 if not os.path.exists(os.path.dirname(local + os.sep + file.get('Key'))):
                     os.makedirs(os.path.dirname(local + os.sep + file.get('Key') + os.sep ))
                 if file.get('Key') != dist + '/' :
-                    resource.meta.client.download_file(bucket, file.get('Key'), local + '/' + file.get('Key'))
-                    print(local + '/' + file.get('Key'))
+                    if file.get('Size') != 0: # wenn das file size = 0 dann ist es ein directory und soll ignoriert werden
+                        resource.meta.client.download_file(bucket, file.get('Key'), local + '/' + file.get('Key'))
+                        
 
 
 def lambda_handler(event, context):
@@ -63,13 +64,11 @@ def lambda_handler(event, context):
         download_dir(client, resource, object_key, '/tmp',bucket_name)
         print(os.path.isdir("/tmp/" + object_key))
     
-    nlp = spacy.load('/tmp/' + object_key)
-    for file in os.listdir("/tmp"):
-        print(file)
+    #nlp = spacy.load('/tmp/' + object_key)
     # hier text reinladen
-    text = "Hallo ich bin ein test text. Bittee sag mir ob ich ok bin und ob ich python oder R kann."
-    oc = nlp(text)
-    print(oc)
+    #text = "Hallo ich bin ein test text. Bittee sag mir ob ich ok bin und ob ich python oder R kann."
+    #oc = nlp(text)
+    #print(oc)
     return {
         'statusCode': 200,
         'body': json.dumps('Hello from Lambda!')
