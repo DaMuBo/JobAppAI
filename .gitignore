@@ -10,3 +10,4 @@ Backend/GetJobs/api_conf.yml
 Backend/LambdaArbeitsagenturCalls/test_venv/*
 Backend/LambdaArbeitsagenturCalls/python/*
 
+venv/
