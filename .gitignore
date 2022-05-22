@@ -1,6 +1,8 @@
 *.json
 Backend/LambdaArbeitsagenturCalls/raw/*.txt
 Backend/LambdaArbeitsagenturCalls/unlabeled/*.txt
+
+Backend/GetJobs/api_conf.yml
 *.pyc
 
 .ipynb_checkpoints
@@ -8,3 +10,6 @@ Backend/LambdaArbeitsagenturCalls/unlabeled/*.txt
 Backend/LambdaArbeitsagenturCalls/test_venv/*
 Backend/LambdaArbeitsagenturCalls/python/*
 Backend/SkillExtractor/lambda_layer/python/*
+
+venv/
+

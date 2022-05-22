@@ -47,7 +47,7 @@ def search(jwt, what, page, limit):
     jwt:
         Das Access Token für den Zugriff
 
-    what: 
+    what:
         Der Suchbergriff nach dem gesucht wird
 
     page:
@@ -122,7 +122,7 @@ def job_rotator(limit=None, what='data'):
             page += 1
         else:
             checker=False
-    
+
     return mylist
 
 
@@ -139,7 +139,12 @@ def dict_to_item(raw):
                 resp[k] = {
                     'S': v
                 }
-            elif isinstance(v,int) or isinstance(v,float):
+
+            elif isinstance(v,bool):
+                resp[k] = {
+                    'S': str(v)
+                }
+            elif isinstance(v,(int,float)):
                 resp[k] = {
                     'N': str(v)
                 }
@@ -161,13 +166,14 @@ def dict_to_item(raw):
         return {
             'S': raw
         }
-    elif isinstance(raw,int) or isinstance(raw,float):
+    elif isinstance(raw,(int,float)):
         return {
             'N': str(raw)
         }
     return {
         'S':str(raw)
     }
+
 
 def lambda_handler(event, context):
     """
@@ -182,7 +188,9 @@ def lambda_handler(event, context):
     mylist = job_rotator(limit, what)
     for row in mylist:
         if 'refnr' in row.keys():
-            myitem = dict_to_item(row)
-            dynamodb.put_item(TableName='JobData', Item=myitem)
+            if 'titel' in row.keys():
+                if 'data' in row['titel'].lower() or 'analyst' in row['titel'].lower():
+                    myitem = dict_to_item(row)
+                    dynamodb.put_item(TableName='JobData', Item=myitem)
 
     print('Put Complete Writing Data to Bucket')
