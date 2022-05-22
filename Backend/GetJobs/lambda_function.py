@@ -1,6 +1,5 @@
 """
-Die Funktion lädt die stellenbeschreibungen aus der DynamoDB, erzeugt die manifest datei und speichert das im S3 Bucket
-
+Developing the lambda function for getting the data from the dynamodb
 """
 
 import base64
@@ -11,15 +10,13 @@ from boto3.dynamodb.conditions import Key
 
 def query_job_data(datum, dynamodb):
     """
-    using query method to get requested data based on the partition key which is the veroeffentlichungsdatum
+    querying job data based on partition key
     """
-
     table = dynamodb.Table('JobData')
     response = table.query(
         KeyConditionExpression=Key('aktuelleVeroeffentlichungsdatum').eq(datum),
     )
     return response['Items']
-
 
 def lambda_handler(event, context):
     """
@@ -27,7 +24,6 @@ def lambda_handler(event, context):
     """
     dynamodb = boto3.resource('dynamodb')
     s3 = boto3.resource("s3")
-
     datobj = datetime.now()
     datum =  str(datobj.year) + '-' + str(datobj.month).zfill(2) + '-' + str(datobj.day).zfill(2)
 
