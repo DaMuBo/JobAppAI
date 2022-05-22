@@ -1,9 +1,9 @@
-import spacy
 import json
-from spacy import displacy
-import re
 import os
+import re
 
+import spacy
+from spacy import displacy
 
 PROJECT_ROOT_DIR = "."
 visu_path = os.path.join(PROJECT_ROOT_DIR, "visu")
@@ -32,7 +32,23 @@ for file in dateien:
     test = file_content.get("source")
 
     def clean_text(text):
-        cleaned = re.sub(r"[\(\[].*?[\)\]]", "", text)
+        cleaned = re.sub(r"[\(\[].*?[\)\]]", " ", text)
+        cleaned = re.sub(
+            r"^\s+", "", cleaned, flags=re.UNICODE
+        )  # Whitespace Begin
+        cleaned = re.sub(
+            r"\s+$", "", cleaned, flags=re.UNICODE
+        )  # Whitespace Ending
+        cleaned = (
+            cleaned.replace("(", "")
+            .replace(")", "")
+            .replace(".", "")
+            .replace(",", "")
+            .replace("-", " ")
+            .replace("/", " ")
+            .replace("\n", " ")
+        )
+        cleaned.strip()
         return cleaned
 
     test = clean_text(test)

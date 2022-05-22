@@ -1,4 +1,3 @@
-{"label":"SKILL","pattern":".NET"}
 {"label":"SKILL","pattern":"API Design"}
 {"label":"SKILL","pattern":"API Gateways"}
 {"label":"SKILL","pattern":"APIs"}
@@ -7,10 +6,9 @@
 {"label":"SKILL","pattern":"Advanced Analytics"}
 {"label":"SKILL","pattern":"Angular"}
 {"label":"SKILL","pattern":"Ansible"}
-{"label":"SKILL","pattern":"Ansible."}
 {"label":"SKILL","pattern":"Apache Spark"}
 {"label":"SKILL","pattern":"Apigee Edge"}
-{"label":"SKILL","pattern":"App-Entwicklung"}
+{"label":"SKILL","pattern":"App Entwicklung"}
 {"label":"SKILL","pattern":"Artifactory"}
 {"label":"SKILL","pattern":"Artificial Intelligence"}
 {"label":"SKILL","pattern":"Azure"}
@@ -19,10 +17,9 @@
 {"label":"SKILL","pattern":"Azure Funkctions"}
 {"label":"SKILL","pattern":"Azure Ops"}
 {"label":"SKILL","pattern":"Azure SQL DB"}
-{"label":"SKILL","pattern":"Azure SQL DB,"}
 {"label":"SKILL","pattern":"Azure Stream Analytics"}
 {"label":"SKILL","pattern":"BGP"}
-{"label":"SKILL","pattern":"BI-Server"}
+{"label":"SKILL","pattern":"BI Server"}
 {"label":"SKILL","pattern":"Bamboo"}
 {"label":"SKILL","pattern":"Bazel"}
 {"label":"SKILL","pattern":"Big Data"}
@@ -33,8 +30,8 @@
 {"label":"SKILL","pattern":"C++"}
 {"label":"SKILL","pattern":"CAN"}
 {"label":"SKILL","pattern":"CCNP"}
-{"label":"SKILL","pattern":"CI/CD"}
-{"label":"SKILL","pattern":"CI/CD-Pipelines"}
+{"label":"SKILL","pattern":"CI CD"}
+{"label":"SKILL","pattern":"CI CD Pipelines"}
 {"label":"SKILL","pattern":"CMake"}
 {"label":"SKILL","pattern":"CSS"}
 {"label":"SKILL","pattern":"Cisco"}
@@ -42,7 +39,7 @@
 {"label":"SKILL","pattern":"Cloud"}
 {"label":"SKILL","pattern":"Confluence"}
 {"label":"SKILL","pattern":"Continuous Delivery"}
-{"label":"SKILL","pattern":"Continuous Integration/-Delivery CI/CD"}
+{"label":"SKILL","pattern":"Continuous Integration  Delivery"}
 {"label":"SKILL","pattern":"DAX"}
 {"label":"SKILL","pattern":"DB2"}
 {"label":"SKILL","pattern":"DWH Standards"}
@@ -52,7 +49,6 @@
 {"label":"SKILL","pattern":"Data Lakes"}
 {"label":"SKILL","pattern":"Data Warehouse"}
 {"label":"SKILL","pattern":"Data Warehouses"}
-{"label":"SKILL","pattern":"Data-Warehouse"}
 {"label":"SKILL","pattern":"Databricks"}
 {"label":"SKILL","pattern":"Daten Visualisierungs"}
 {"label":"SKILL","pattern":"Datenbankabfragen"}
@@ -61,14 +57,13 @@
 {"label":"SKILL","pattern":"Datenmanagement"}
 {"label":"SKILL","pattern":"Datenmodellierung"}
 {"label":"SKILL","pattern":"Datenstrukturen"}
-{"label":"SKILL","pattern":"Datenstrukturen,"}
 {"label":"SKILL","pattern":"Datenvisualisierung"}
 {"label":"SKILL","pattern":"Deep Learning"}
 {"label":"SKILL","pattern":"Delta Lakes"}
 {"label":"SKILL","pattern":"DevOps"}
 {"label":"SKILL","pattern":"Docker"}
 {"label":"SKILL","pattern":"EDIFACT"}
-{"label":"SKILL","pattern":"ELT-"}
+{"label":"SKILL","pattern":"ELT "}
 {"label":"SKILL","pattern":"ETL"}
 {"label":"SKILL","pattern":"Eclipse"}
 {"label":"SKILL","pattern":"Entwicklung"}
@@ -112,13 +107,12 @@
 {"label":"SKILL","pattern":"Lua"}
 {"label":"SKILL","pattern":"MCSE Data Plattform"}
 {"label":"SKILL","pattern":"MDX"}
+{"label":"SKILL","pattern":"MS Access"}
+{"label":"SKILL","pattern":"MS Excel"}
 {"label":"SKILL","pattern":"MS Office"}
 {"label":"SKILL","pattern":"MS SQL"}
-{"label":"SKILL","pattern":"MS-Access"}
-{"label":"SKILL","pattern":"MS-Excel"}
-{"label":"SKILL","pattern":"MS-Office"}
-{"label":"SKILL","pattern":"MS-SQL Datenbanken"}
-{"label":"SKILL","pattern":"MS-SQL-Server"}
+{"label":"SKILL","pattern":"MS SQL Datenbanken"}
+{"label":"SKILL","pattern":"MS SQL Server"}
 {"label":"SKILL","pattern":"MSVC"}
 {"label":"SKILL","pattern":"Machine Learning"}
 {"label":"SKILL","pattern":"Maschinelles Lernen"}
@@ -135,21 +129,22 @@
 {"label":"SKILL","pattern":"Microsoft Teams"}
 {"label":"SKILL","pattern":"MongoDB"}
 {"label":"SKILL","pattern":"MySQL"}
+{"label":"SKILL","pattern":"NET"}
 {"label":"SKILL","pattern":"NLS"}
 {"label":"SKILL","pattern":"NSE"}
 {"label":"SKILL","pattern":"NewSQL"}
 {"label":"SKILL","pattern":"Nginx"}
 {"label":"SKILL","pattern":"NoSQL"}
-{"label":"SKILL","pattern":"Node.js"}
 {"label":"SKILL","pattern":"NodeJS"}
+{"label":"SKILL","pattern":"Nodejs"}
 {"label":"SKILL","pattern":"ODI"}
 {"label":"SKILL","pattern":"OLAP"}
 {"label":"SKILL","pattern":"OSEK"}
-{"label":"SKILL","pattern":"Office-Anwendungen"}
+{"label":"SKILL","pattern":"Office Anwendungen"}
 {"label":"SKILL","pattern":"Office365"}
 {"label":"SKILL","pattern":"OpenSSL"}
 {"label":"SKILL","pattern":"Oracle"}
-{"label":"SKILL","pattern":"Oracle-DBs"}
+{"label":"SKILL","pattern":"Oracle DBs"}
 {"label":"SKILL","pattern":"PHP"}
 {"label":"SKILL","pattern":"Pentaho"}
 {"label":"SKILL","pattern":"Pentaho PDI"}
@@ -171,22 +166,21 @@
 {"label":"SKILL","pattern":"Robotic Process Automation"}
 {"label":"SKILL","pattern":"SAP"}
 {"label":"SKILL","pattern":"SAP DVM Cloud Solution"}
-{"label":"SKILL","pattern":"SAP IQ/Azure Blob"}
+{"label":"SKILL","pattern":"SAP IQ Azure Blob"}
 {"label":"SKILL","pattern":"SAP Solution Manager Workcenter"}
-{"label":"SKILL","pattern":"SAP,"}
 {"label":"SKILL","pattern":"SAS"}
 {"label":"SKILL","pattern":"SIP"}
-{"label":"SKILL","pattern":"SP-Data"}
+{"label":"SKILL","pattern":"SP Data"}
 {"label":"SKILL","pattern":"SQL"}
+{"label":"SKILL","pattern":"SQL Datenbank"}
+{"label":"SKILL","pattern":"SQL Datenbanken"}
 {"label":"SKILL","pattern":"SQL Developer"}
-{"label":"SKILL","pattern":"SQL-Datenbank"}
-{"label":"SKILL","pattern":"SQL-Datenbanken"}
 {"label":"SKILL","pattern":"SSAS"}
-{"label":"SKILL","pattern":"SSIS,"}
+{"label":"SKILL","pattern":"SSIS"}
 {"label":"SKILL","pattern":"SSMS"}
 {"label":"SKILL","pattern":"SSRS"}
 {"label":"SKILL","pattern":"Scala"}
-{"label":"SKILL","pattern":"Script-und Analysesprachen"}
+{"label":"SKILL","pattern":"Script und Analysesprachen"}
 {"label":"SKILL","pattern":"Skalierung"}
 {"label":"SKILL","pattern":"Softwarearchitektur"}
 {"label":"SKILL","pattern":"SonarQube"}
@@ -196,23 +190,23 @@
 {"label":"SKILL","pattern":"Stata"}
 {"label":"SKILL","pattern":"Stored Procedures"}
 {"label":"SKILL","pattern":"Systemintegration"}
-{"label":"SKILL","pattern":"T-SQL"}
-{"label":"SKILL","pattern":"TCP/IP"}
+{"label":"SKILL","pattern":"T SQL"}
+{"label":"SKILL","pattern":"TCP IP"}
 {"label":"SKILL","pattern":"TM 1"}
 {"label":"SKILL","pattern":"Tableau"}
 {"label":"SKILL","pattern":"Textdateien"}
 {"label":"SKILL","pattern":"Transactions"}
-{"label":"SKILL","pattern":"UI-Path"}
+{"label":"SKILL","pattern":"UI Path"}
 {"label":"SKILL","pattern":"UMTS"}
 {"label":"SKILL","pattern":"UNIX"}
 {"label":"SKILL","pattern":"UX Design"}
-{"label":"SKILL","pattern":"UX/UI"}
+{"label":"SKILL","pattern":"UX UI"}
 {"label":"SKILL","pattern":"Unix"}
 {"label":"SKILL","pattern":"VBA"}
 {"label":"SKILL","pattern":"VDA"}
 {"label":"SKILL","pattern":"Version Control"}
 {"label":"SKILL","pattern":"Visual Studio Code"}
-{"label":"SKILL","pattern":"WAN/LAN"}
+{"label":"SKILL","pattern":"WAN LAN"}
 {"label":"SKILL","pattern":"Websockets"}
 {"label":"SKILL","pattern":"Windows"}
 {"label":"SKILL","pattern":"Word"}

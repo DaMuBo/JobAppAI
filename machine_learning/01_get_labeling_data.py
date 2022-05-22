@@ -4,10 +4,11 @@
 
 # FIXME:
 
-import pandas as pd
-import boto3
-import os
 import json
+import os
+
+import boto3
+import pandas as pd
 
 bucket_name = "job-app-data-bucket"
 labeling_files = [

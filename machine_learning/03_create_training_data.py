@@ -2,12 +2,13 @@
 # was ist mit englischen Texten?
 # Hab im moment nur deutsches NLP. Ist das eig ein Problem?
 
-from venv import create
-import spacy
-from spacy.lang.de import German
 import json
 import os
+import re
 import sys
+
+import spacy
+from spacy.lang.de import German
 
 sys.stdout.reconfigure(encoding="utf-8")
 
@@ -75,9 +76,30 @@ def create_train_data_line(model, text):
     return results
 
 
-# patterns = create_patterns(r"data\skills.json", "SKILL")
-# print(patterns)
-# generate_ruler(patterns)
+def clean_text(text):
+    cleaned = re.sub(r"[\(\[].*?[\)\]]", " ", text)
+    cleaned = re.sub(
+        r"^\s+", "", cleaned, flags=re.UNICODE
+    )  # Whitespace Begin
+    cleaned = re.sub(
+        r"\s+$", "", cleaned, flags=re.UNICODE
+    )  # Whitespace Ending
+    cleaned = (
+        cleaned.replace("(", "")
+        .replace(")", "")
+        .replace(".", "")
+        .replace(",", "")
+        .replace("-", " ")
+        .replace("/", " ")
+        .replace("\n", " ")
+    )
+    cleaned.strip()
+    return cleaned
+
+
+patterns = create_patterns(r"data\skills.json", "SKILL")
+print(patterns)
+generate_ruler(patterns)
 
 ruler_path = os.path.join(models_path, "skill_ner")
 nlp = spacy.load(ruler_path)
@@ -92,8 +114,7 @@ for file in files:
     segments = text.split("\n\n")
     hits = []
     for segment in segments:
-        segment = segment.strip()
-        segment = segment.replace("\n", " ")
+        segment = clean_text(segment)
         results = create_train_data_line(nlp, segment)
         if results != []:
             TRAIN_DATA.append(results)

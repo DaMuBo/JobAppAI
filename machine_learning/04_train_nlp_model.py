@@ -1,12 +1,13 @@
-from spacy.training import Example
-import spacy
 import json
-import random
 import os
+import random
 import re
-import sys
-import boto3
 import subprocess
+import sys
+
+import boto3
+import spacy
+from spacy.training import Example
 
 sys.stdout.reconfigure(encoding="utf-8")
 
@@ -42,6 +43,7 @@ def train_spacy(data, iterations):
     other_pipes = [pipe for pipe in nlp.pipe_names if pipe != "ner"]
     with nlp.disable_pipes(*other_pipes):
         optimizer = nlp.begin_training()
+
         for itn in range(iterations):
             print("Starting iteration " + str(itn))
             random.shuffle(TRAIN_DATA)
@@ -52,27 +54,28 @@ def train_spacy(data, iterations):
                 example = Example.from_dict(doc, annotations)
 
                 nlp.update([example], drop=0.2, sgd=optimizer, losses=losses)
+
             print(losses)
     return nlp
 
 
-# train_data_path = os.path.join(data_path, "skill_label_train_data.json")
-# TRAIN_DATA = load_data(train_data_path)
+train_data_path = os.path.join(data_path, "skill_label_train_data.json")
+TRAIN_DATA = load_data(train_data_path)
 
-# nlp = train_spacy(TRAIN_DATA, 30)
-# nlp.to_disk(skill_ner_model_path)
+nlp = train_spacy(TRAIN_DATA, 30)
+nlp.to_disk(skill_ner_model_path)
 
 
-# subprocess.run(
-#     [
-#         "aws",
-#         "s3",
-#         "cp",
-#         "--recursive",
-#         r"models\skill_ner_model",
-#         "s3://job-app-data-bucket/models/skill_ner_model/",
-#     ]
-# )
+subprocess.run(
+    [
+        "aws",
+        "s3",
+        "cp",
+        "--recursive",
+        r"models\skill_ner_model",
+        "s3://job-app-data-bucket/models/skill_ner_model/",
+    ]
+)
 
 
 # Tests
@@ -84,7 +87,23 @@ print(test)
 
 
 def clean_text(text):
-    cleaned = re.sub(r"[\(\[].*?[\)\]]", "", text)
+    cleaned = re.sub(r"[\(\[].*?[\)\]]", " ", text)
+    cleaned = re.sub(
+        r"^\s+", "", cleaned, flags=re.UNICODE
+    )  # Whitespace Begin
+    cleaned = re.sub(
+        r"\s+$", "", cleaned, flags=re.UNICODE
+    )  # Whitespace Ending
+    cleaned = (
+        cleaned.replace("(", "")
+        .replace(")", "")
+        .replace(".", "")
+        .replace(",", "")
+        .replace("-", " ")
+        .replace("/", " ")
+        .replace("\n", " ")
+    )
+    cleaned.strip()
     return cleaned
 
 

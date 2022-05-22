@@ -1,7 +1,7 @@
 import json
-import sys
 import os
 import re
+import sys
 
 sys.stdout.reconfigure(encoding="utf-8")
 
@@ -30,11 +30,19 @@ def save_data(file, data):
 
 def clean_skill(text):
     cleaned = re.sub(r"[\(\[].*?[\)\]]", " ", text)
+    cleaned = re.sub(
+        r"^\s+", "", cleaned, flags=re.UNICODE
+    )  # Whitespace Begin
+    cleaned = re.sub(
+        r"\s+$", "", cleaned, flags=re.UNICODE
+    )  # Whitespace Ending
     cleaned = (
         cleaned.replace("(", "")
         .replace(")", "")
-        .replace(".", " ")
-        .replace(",", " ")
+        .replace(".", "")
+        .replace(",", "")
+        .replace("-", " ")
+        .replace("/", " ")
     )
     cleaned.strip()
     return cleaned
