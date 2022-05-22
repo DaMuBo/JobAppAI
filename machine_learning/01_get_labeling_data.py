@@ -11,9 +11,16 @@ import json
 
 bucket_name = "job-app-data-bucket"
 labeling_files = [
-    "manifest_output/job-app-labeling/manifests/output/output.manifest"
+    "manifest_output/job-app-labeling/manifests/output/output.manifest",
+    "manifest_output/job-app-labeling/manifests/intermediate/1/output.manifest",
+    "manifest_output/job-app-labeling-2/labelingJob3/manifests/intermediate/1/output.manifest",
 ]
-output_files = ["labeling_job_1_output.manifest"]
+output_files = [
+    "labeling_job_1_output.manifest",
+    "labeling_job_1_intermediate_output.manifest",
+    "labeling_job_2_intermediate_output.manifest",
+]
+
 
 s3 = boto3.client("s3")
 

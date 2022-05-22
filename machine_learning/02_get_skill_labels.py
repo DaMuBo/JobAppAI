@@ -1,10 +1,15 @@
 import json
 import sys
 import os
+import re
 
 sys.stdout.reconfigure(encoding="utf-8")
 
-json_folders = ["labeling_job_1_output"]
+json_folders = [
+    "labeling_job_1_output",
+    "labeling_job_1_intermediate_output",
+    "labeling_job_2_intermediate_output",
+]
 
 PROJECT_ROOT_DIR = "."
 data_path = os.path.join(PROJECT_ROOT_DIR, "data")
@@ -23,6 +28,18 @@ def save_data(file, data):
         json.dump(data, f, indent=4, ensure_ascii=False)
 
 
+def clean_skill(text):
+    cleaned = re.sub(r"[\(\[].*?[\)\]]", " ", text)
+    cleaned = (
+        cleaned.replace("(", "")
+        .replace(")", "")
+        .replace(".", " ")
+        .replace(",", " ")
+    )
+    cleaned.strip()
+    return cleaned
+
+
 def get_skills_from_json(file):
     data = load_data(file)
 
@@ -31,8 +48,7 @@ def get_skills_from_json(file):
 
     for label in labels:
         skill = text[label.get("startOffset") : label.get("endOffset")]
-        skill = skill.replace("(", "").replace(")", "")
-        skill = skill.strip()
+        skill = clean_skill(skill)
         skills.append(skill)
 
 
