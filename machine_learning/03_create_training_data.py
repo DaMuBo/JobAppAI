@@ -11,7 +11,11 @@ import sys
 
 sys.stdout.reconfigure(encoding="utf-8")
 
-json_folders = ["labeling_job_1_output"]
+json_folders = [
+    "labeling_job_1_output",
+    "labeling_job_1_intermediate_output",
+    "labeling_job_2_intermediate_output",
+]
 
 PROJECT_ROOT_DIR = "."
 data_path = os.path.join(PROJECT_ROOT_DIR, "data")
