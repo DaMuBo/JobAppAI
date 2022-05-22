@@ -6,6 +6,7 @@ import os
 import re
 import sys
 import boto3
+import subprocess
 
 sys.stdout.reconfigure(encoding="utf-8")
 
@@ -60,6 +61,18 @@ def train_spacy(data, iterations):
 
 # nlp = train_spacy(TRAIN_DATA, 30)
 # nlp.to_disk(skill_ner_model_path)
+
+
+# subprocess.run(
+#     [
+#         "aws",
+#         "s3",
+#         "cp",
+#         "--recursive",
+#         r"models\skill_ner_model",
+#         "s3://job-app-data-bucket/models/skill_ner_model/",
+#     ]
+# )
 
 
 # Tests
