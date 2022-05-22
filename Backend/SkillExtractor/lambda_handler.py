@@ -21,6 +21,7 @@ def get_data():
     Hole daten aus der dynamo DB nach dem beschriebenen muster und gib diese zurück
     """
     
+    
 def write_data():
     """
     Aktualisiere die Daten mit den angereicherten Skills in der dynamoDB
@@ -37,15 +38,15 @@ def download_dir(client, resource, dist, local='/tmp', bucket='s3bucket'):
     Kopiere das ml in einen lokalen ordner um für spacy verfügbar zu sein.
     """
     paginator = client.get_paginator('list_objects')
-    for result in paginator.paginate(Bucket=bucket, Delimiter='/'):
-        if result.get('CommonPrefixes') is not None:
-            for subdir in result.get('CommonPrefixes'):
-                download_dir(client, resource, subdir.get('Prefix'), local, bucket)
+    page_iterator = paginator.paginate(Bucket=bucket, Prefix=dist)
+    for result in page_iterator:
         if result.get('Contents') is not None:
             for file in result.get('Contents'):
                 if not os.path.exists(os.path.dirname(local + os.sep + file.get('Key'))):
-                     os.makedirs(os.path.dirname(local + os.sep + file.get('Key')))
-                resource.meta.client.download_file(bucket, file.get('Key'), local + os.sep + file.get('Key'))
+                    os.makedirs(os.path.dirname(local + os.sep + file.get('Key') + os.sep ))
+                if file.get('Key') != dist + '/' :
+                    resource.meta.client.download_file(bucket, file.get('Key'), local + '/' + file.get('Key'))
+                    print(local + '/' + file.get('Key'))
 
 
 def lambda_handler(event, context):
@@ -57,17 +58,18 @@ def lambda_handler(event, context):
     client = boto3.client('s3')
     resource = boto3.resource('s3')
     bucket_name =  "job-app-data-bucket"
-    object_key = "models/skill_ner_model"  # replace object key
-    if (os.path.isdir("/tmp/skill_ner_model")==False):
-        download_dir(client, resource, 'skill_ner_model', '/tmp',bucket_name)
-        print('pfad erzeugt')
-    #spacy.util.set_data_path('/tmp')
-    spacy.util.set_data_path('/tmp')
-    nlp = spacy.load('/tmp/skill_ner_model/')
+    object_key = 'models/skill_ner_model'  # replace object key
+    if (os.path.isdir("/tmp/" + object_key)==False):
+        download_dir(client, resource, object_key, '/tmp',bucket_name)
+        print(os.path.isdir("/tmp/" + object_key))
+    
+    nlp = spacy.load('/tmp/' + object_key)
+    for file in os.listdir("/tmp"):
+        print(file)
     # hier text reinladen
     text = "Hallo ich bin ein test text. Bittee sag mir ob ich ok bin und ob ich python oder R kann."
     oc = nlp(text)
-    
+    print(oc)
     return {
         'statusCode': 200,
         'body': json.dumps('Hello from Lambda!')
