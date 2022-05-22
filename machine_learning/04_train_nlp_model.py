@@ -55,24 +55,11 @@ def train_spacy(data, iterations):
     return nlp
 
 
-def upload_model_to_s3(path):
-    bucket_name = "job-app-data-bucket"
-    s3 = boto3.client("s3")
-    for root, dirs, files in os.walk(path):
-        for file in files:
-            s3.upload_file(
-                os.path.join(root, file),
-                bucket_name,
-                "models/" + "skill_ner_model/" + file,
-            )
-
-
 # train_data_path = os.path.join(data_path, "skill_label_train_data.json")
 # TRAIN_DATA = load_data(train_data_path)
 
 # nlp = train_spacy(TRAIN_DATA, 30)
 # nlp.to_disk(skill_ner_model_path)
-upload_model_to_s3(skill_ner_model_path)
 
 
 # Tests
