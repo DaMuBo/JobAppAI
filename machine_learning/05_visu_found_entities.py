@@ -1,3 +1,6 @@
+"""
+VIusalisierung der gefundenen Entitäten für Präsi Zwecke etc.
+"""
 import json
 import os
 import re

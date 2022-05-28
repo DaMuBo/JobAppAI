@@ -1,14 +1,10 @@
-# TODO:
-#
-
-
-# FIXME:
+"""
+Gelabelte Daten downloaden und abziehen
+"""
 
 import json
 import os
-
 import boto3
-import pandas as pd
 
 bucket_name = "job-app-data-bucket"
 labeling_files = [
@@ -31,7 +27,9 @@ os.makedirs(data_path, exist_ok=True)
 
 
 def get_data():
-
+    """
+    Laden der Daten vom Bucket und ablegen im Root directory
+    """
     # alle Dateien holen und ablegen
     for index, labeling_file in enumerate(labeling_files):
         print(f"{labeling_file}")

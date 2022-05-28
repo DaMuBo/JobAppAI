@@ -1,3 +1,6 @@
+"""
+Beispiel dummy text
+"""
 import json
 import os
 import re
@@ -18,17 +21,26 @@ skills_path = os.path.join(data_path, "skills.json")
 
 
 def load_data(file):
+    """
+    daten laden und die daten zurückgeben
+    """
     with open(file, "r", encoding="utf-8") as f:
         data = json.load(f)
     return data
 
 
 def save_data(file, data):
+    """
+    Daten speichern
+    """
     with open(file, "w", encoding="utf-8") as f:
         json.dump(data, f, indent=4, ensure_ascii=False)
 
 
 def clean_skill(text):
+    """
+    Text Bereinigungen vom Text
+    """
     cleaned = re.sub(r"[\(\[].*?[\)\]]", " ", text)
     cleaned = re.sub(
         r"^\s+", "", cleaned, flags=re.UNICODE
@@ -49,6 +61,9 @@ def clean_skill(text):
 
 
 def get_skills_from_json(file):
+    """
+    die skills aus dem Json laden 
+    """
     data = load_data(file)
 
     text = data.get("source")

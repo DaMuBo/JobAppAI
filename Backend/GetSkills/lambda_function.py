@@ -1,10 +1,7 @@
 """
 Developing the lambda function for getting the data from the dynamodb
 """
-
-import base64
 import json
-import re
 from datetime import datetime
 from datetime import timedelta
 import boto3
@@ -24,6 +21,8 @@ def query_job_data(datum,jobs, dynamodb):
     Lade die Daten aus der DB
     """
     table = dynamodb.Table('JobData')
+    if jobs != '':
+        print("Dummy Function blabla")
     response = table.query(
         KeyConditionExpression=Key('aktuelleVeroeffentlichungsdatum').eq(datum),
         #Limit = limit
@@ -35,13 +34,12 @@ def lambda_handler(event, context):
     Function um von dynamo DB die benötigten Datensets zu laden und in json format an die API zurück zu liefern.
     """
     dynamodb = boto3.resource('dynamodb')
-    dynclient = boto3.client('dynamodb')
-    
+
     if event['timeframe'] == '':
         timeframe = 0
     else:
         timeframe = int(event['timeframe'])
-        
+
     jobs = event['jobs']
     datobj = get_min_datum(timeframe)
     numbjobs = 0
@@ -61,12 +59,12 @@ def lambda_handler(event, context):
 
     for skill in dicskills.keys():
         dicskills[skill] = dicskills[skill] / numbjobs
-    
+
     liste = sorted(dicskills,key= dicskills.get, reverse=True)
     output = {}
     for key in liste:
         output[key] = dicskills[key]
-        
+
     return json.dumps({
         'statusCode': 200,
         'body': output
