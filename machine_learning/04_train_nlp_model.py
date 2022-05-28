@@ -1,3 +1,6 @@
+"""
+Training des NLP Modells
+"""
 import json
 import os
 import random

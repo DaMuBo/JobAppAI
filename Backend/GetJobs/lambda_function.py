@@ -1,8 +1,6 @@
 """
 Developing the lambda function for getting the data from the dynamodb
 """
-
-import base64
 import json
 from datetime import datetime
 import boto3

@@ -107,7 +107,7 @@ def download_dir(client, resource, dist, local='/tmp', bucket='s3bucket'):
                 if file.get('Key') != dist + '/' :
                     if file.get('Size') != 0: # wenn das file size = 0 dann ist es ein directory und soll ignoriert werden
                         resource.meta.client.download_file(bucket, file.get('Key'), local + '/' + file.get('Key'))
-                        
+
 
 
 def lambda_handler(event, context):
@@ -121,9 +121,9 @@ def lambda_handler(event, context):
     dynclient = boto3.client('dynamodb')
     bucket_name =  "job-app-data-bucket"
     object_key = 'models/skill_ner_model'  # replace object key
-    if (os.path.isdir("/tmp/" + object_key)==False):
+    if (os.path.isdir("/tmp/" + object_key) is False):
         download_dir(client, resource, object_key, '/tmp',bucket_name)
-    
+
     datobj = get_min_datum(1)
     nlp = spacy.load('/tmp/' + object_key)
     while datobj <= datetime.now():

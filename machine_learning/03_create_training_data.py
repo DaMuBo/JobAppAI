@@ -1,7 +1,8 @@
+"""
 # TODO:
 # was ist mit englischen Texten?
 # Hab im moment nur deutsches NLP. Ist das eig ein Problem?
-
+"""
 import json
 import os
 import re
@@ -26,17 +27,26 @@ os.makedirs(models_path, exist_ok=True)
 
 
 def load_data(file):
+    """
+    Daten in den speicher laden und zurückgeben
+    """
     with open(file, "r", encoding="utf-8") as f:
         data = json.load(f)
     return data
 
 
 def save_data(file, data):
+    """
+    Daten speichern
+    """
     with open(file, "w", encoding="utf-8") as f:
         json.dump(data, f, indent=4, ensure_ascii=False)
 
 
 def create_patterns(file, type):
+    """
+    Patterns erzeugen
+    """
     data = load_data(file)
     patterns = []
     for item in data:
@@ -46,6 +56,9 @@ def create_patterns(file, type):
 
 
 def generate_ruler(patterns):
+    """
+    erzeuge regeln auf basis der regeln
+    """
     nlp = German()
     entity_ruler = nlp.add_pipe("entity_ruler")
     entity_ruler.initialize(
@@ -56,6 +69,9 @@ def generate_ruler(patterns):
 
 
 def get_all_json_files():
+    """
+    alle JSON files iteriren in dem ordner
+    """
     all_json_files = []
     for folder in json_folders:
         json_folder_path = os.path.join(data_path, folder)
@@ -66,6 +82,9 @@ def get_all_json_files():
 
 
 def create_train_data_line(model, text):
+    """
+    beispieltext
+    """
     doc = nlp(text)
     results = []
     entities = []
@@ -77,6 +96,9 @@ def create_train_data_line(model, text):
 
 
 def clean_text(text):
+    """
+    beispieltext
+    """
     cleaned = re.sub(r"[\(\[].*?[\)\]]", " ", text)
     cleaned = re.sub(
         r"^\s+", "", cleaned, flags=re.UNICODE

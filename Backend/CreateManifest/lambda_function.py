@@ -2,8 +2,6 @@
 Die Funktion lädt die stellenbeschreibungen aus der DynamoDB, erzeugt die manifest datei und speichert das im S3 Bucket
 
 """
-
-import base64
 import json
 from datetime import datetime
 import boto3
