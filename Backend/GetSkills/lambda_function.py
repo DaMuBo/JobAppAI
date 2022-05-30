@@ -1,7 +1,10 @@
 """
 Developing the lambda function for getting the data from the dynamodb
 """
+
+import base64
 import json
+import re
 from datetime import datetime
 from datetime import timedelta
 import boto3
@@ -16,16 +19,14 @@ def get_min_datum(timeframe=0):
     return datum - timedelta(days=timeframe)
 
 
-def query_job_data(datum,jobs, dynamodb):
+def query_job_data(datum, dynamodb):
     """
     Lade die Daten aus der DB
     """
     table = dynamodb.Table('JobData')
-    if jobs != '':
-        print("Dummy Function blabla")
     response = table.query(
         KeyConditionExpression=Key('aktuelleVeroeffentlichungsdatum').eq(datum),
-        #Limit = limit
+        ProjectionExpression='skills,titel'
     )
     return response['Items']
 
@@ -34,12 +35,13 @@ def lambda_handler(event, context):
     Function um von dynamo DB die benötigten Datensets zu laden und in json format an die API zurück zu liefern.
     """
     dynamodb = boto3.resource('dynamodb')
-
+    dynclient = boto3.client('dynamodb')
+    
     if event['timeframe'] == '':
         timeframe = 0
     else:
         timeframe = int(event['timeframe'])
-
+        
     jobs = event['jobs']
     datobj = get_min_datum(timeframe)
     numbjobs = 0
@@ -47,24 +49,33 @@ def lambda_handler(event, context):
     while datobj <= datetime.now():
         datum =  str(datobj.year) + '-' + str(datobj.month).zfill(2) + '-' + str(datobj.day).zfill(2)
         datobj = datobj + timedelta(days=1)
-        response = query_job_data(datum,jobs,dynamodb)
+        response = query_job_data(datum,dynamodb)
         for row in response:
-            numbjobs += 1
             if 'skills' in row.keys():
-                for skill in row['skills']:
-                    if skill.lower() in dicskills.keys():
-                        dicskills[skill.lower()] += 1
-                    else:
-                        dicskills[skill.lower()] = 1
+                if jobs == '':
+                    numbjobs += 1
+                    for skill in row['skills']:
+                        if skill.lower() in dicskills.keys():
+                            dicskills[skill.lower()] += 1
+                        else:
+                            dicskills[skill.lower()] = 1
+                elif jobs.lower() in row['titel'].lower():
+                    numbjobs += 1
+                    for skill in row['skills']:
+                        if skill.lower() in dicskills.keys():
+                            dicskills[skill.lower()] += 1
+                        else:
+                            dicskills[skill.lower()] = 1
+                    
 
     for skill in dicskills.keys():
         dicskills[skill] = dicskills[skill] / numbjobs
-
+    
     liste = sorted(dicskills,key= dicskills.get, reverse=True)
     output = {}
     for key in liste:
         output[key] = dicskills[key]
-
+        
     return json.dumps({
         'statusCode': 200,
         'body': output
