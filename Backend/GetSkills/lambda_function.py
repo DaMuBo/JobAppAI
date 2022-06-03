@@ -66,17 +66,17 @@ def lambda_handler(event, context):
                             dicskills[skill.lower()] += 1
                         else:
                             dicskills[skill.lower()] = 1
-                    
+
 
     for skill in dicskills.keys():
         dicskills[skill] = dicskills[skill] / numbjobs
-    
+
     liste = sorted(dicskills,key= dicskills.get, reverse=True)
     output = {}
     for key in liste:
         output[key] = dicskills[key]
-        
-    return json.dumps({
+
+    return {
         'statusCode': 200,
         'body': output
-    })
+    }
