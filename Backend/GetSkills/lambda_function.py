@@ -76,7 +76,7 @@ def lambda_handler(event, context):
     for key in liste:
         output[key] = dicskills[key]
 
-    return {
+    return json.dumps({
         'statusCode': 200,
-        'body': json.dumps(output)
-    }
+        'body': output
+    })
